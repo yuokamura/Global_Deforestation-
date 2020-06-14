@@ -8,7 +8,7 @@ SELECT  tab1.region,
         tab2.forest_per_2016 - tab1.forest_per_1990 AS percent_diff
 FROM    (
         SELECT  region,
-                SUM(forest_area_sqkm)/SUM(land_area_sqkm) * 100 AS forest_per_1990
+                ROUND(CAST(SUM(forest_area_sqkm)/SUM(land_area_sqkm)*100 AS NUMERIC),2) AS forest_per_1990
         FROM    forestation
         WHERE   year = 1990
           AND   forest_area_per IS NOT NULL -- eliminating null entries in either forest or land area
@@ -16,7 +16,7 @@ FROM    (
         ) AS tab1
   JOIN  (
         SELECT  region,
-                SUM(forest_area_sqkm)/SUM(land_area_sqkm) * 100 AS forest_per_2016
+                ROUND(CAST(SUM(forest_area_sqkm)/SUM(land_area_sqkm)*100 AS NUMERIC),2) AS forest_per_2016
         FROM    forestation
         WHERE   year = 2016
           AND   forest_area_per IS NOT NULL
@@ -29,17 +29,15 @@ ORDER BY 4
 ## !! The following codes were used to answer the questions
 WITH  tab_1990 AS (
                   SELECT  region,
-                          SUM(forest_area_sqkm)/SUM(land_area_sqkm) * 100 AS forest_per_region
+                          ROUND(CAST(SUM(forest_area_sqkm)/SUM(land_area_sqkm)*100 AS NUMERIC),2) AS forest_per_region
                   FROM    forestation
                   WHERE   year = 1990
-                    AND   forest_area_per IS NOT NULL -- eliminating null entries in either forest or land area
                   GROUP BY 1),
       tab_2016 AS (
                   SELECT  region,
-                          SUM(forest_area_sqkm)/SUM(land_area_sqkm) * 100 AS forest_per_region
+                          ROUND(CAST(SUM(forest_area_sqkm)/SUM(land_area_sqkm)*100 AS NUMERIC),2) AS forest_per_region
                   FROM    forestation
                   WHERE   year = 2016
-                    AND   forest_area_per IS NOT NULL
                   GROUP BY 1
                   )
 
@@ -68,17 +66,15 @@ LIMIT 1
 
 WITH  tab_1990 AS (
                   SELECT  region,
-                          SUM(forest_area_sqkm)/SUM(land_area_sqkm) * 100 AS forest_per_region
+                          ROUND(CAST(SUM(forest_area_sqkm)/SUM(land_area_sqkm)*100 AS NUMERIC),2) AS forest_per_region
                   FROM    forestation
                   WHERE   year = 1990
-                    AND   forest_area_per IS NOT NULL -- eliminating null entries in either forest or land area
                   GROUP BY 1),
       tab_2016 AS (
                   SELECT  region,
-                          SUM(forest_area_sqkm)/SUM(land_area_sqkm) * 100 AS forest_per_region
+                          ROUND(CAST(SUM(forest_area_sqkm)/SUM(land_area_sqkm)*100 AS NUMERIC),2) AS forest_per_region
                   FROM    forestation
                   WHERE   year = 2016
-                    AND   forest_area_per IS NOT NULL
                   GROUP BY 1
                   )
 SELECT  tab_1990.region,

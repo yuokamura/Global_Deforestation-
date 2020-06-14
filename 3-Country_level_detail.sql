@@ -14,8 +14,7 @@ WITH  tab_1990 AS (
                           forest_area_per
                   FROM    forestation
                   WHERE   year = 1990
-                    AND   forest_area_per IS NOT NULL -- eliminating null entries in either forest or land area
-                  ),
+                    AND   forest_area_per IS NOT NULL),
       tab_2016 AS (
                   SELECT  country_name,
                           region,
@@ -23,8 +22,7 @@ WITH  tab_1990 AS (
                           forest_area_per
                   FROM    forestation
                   WHERE   year = 2016
-                    AND   forest_area_per IS NOT NULL
-                  )
+                    AND   forest_area_per IS NOT NULL)
 
 SELECT  tab_1990.country_name,
         tab_1990.region,
@@ -32,9 +30,8 @@ SELECT  tab_1990.country_name,
         tab_2016.forest_area_sqkm AS forest_area_sqkm_2016,
         tab_2016.forest_area_sqkm - tab_1990.forest_area_sqkm
         AS sqkm_change_in_forest_area,
-        (tab_2016.forest_area_sqkm - tab_1990.forest_area_sqkm)
-        /tab_1990.forest_area_sqkm*100
-        AS perc_change_in_forest_area
+        ROUND(CAST((tab_2016.forest_area_sqkm - tab_1990.forest_area_sqkm)
+        /tab_1990.forest_area_sqkm*100 AS NUMERIC),2) AS perc_change_in_forest_area
 FROM    tab_1990
   JOIN  tab_2016
   ON    tab_1990.country_name = tab_2016.country_name
@@ -53,10 +50,11 @@ SELECT  country_name,
         CASE
           WHEN  forest_area_per> 75 THEN 4
           WHEN  forest_area_per> 50 THEN 3
-          WHEN  forest_area_per>25 THEN 2
+          WHEN  forest_area_per> 25 THEN 2
           ELSE  1
         END AS quartile
 FROM    tab_2016
+WHERE   country_name != 'World'
 
 
 -- use the code above as subquery to count number of countries in each quartile
@@ -70,10 +68,11 @@ FROM    (
                 CASE
                   WHEN  forest_area_per> 75 THEN 4
                   WHEN  forest_area_per> 50 THEN 3
-                  WHEN  forest_area_per>25 THEN 2
+                  WHEN  forest_area_per> 25 THEN 2
                   ELSE  1
                 END AS quartile
         FROM    tab_2016
+        WHERE   country_name != 'World'
         ) AS tab_qt
 GROUP BY 1
 ORDER BY 1
@@ -93,7 +92,7 @@ FROM    (
                 CASE
                   WHEN  forest_area_per> 75 THEN 4
                   WHEN  forest_area_per> 50 THEN 3
-                  WHEN  forest_area_per>25 THEN 2
+                  WHEN  forest_area_per> 25 THEN 2
                   ELSE  1
                 END AS quartile
         FROM    tab_2016
@@ -112,4 +111,4 @@ WHERE   forest_area_per > (
                           WHERE   country_name = 'United States'
                           )
 
-## solution = 94                        
+## solution = 94

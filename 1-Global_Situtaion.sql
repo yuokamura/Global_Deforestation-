@@ -52,3 +52,28 @@ SELECT  country_name,
 FROM    forestation
 WHERE   year = 2016
     AND land_area_sqkm BETWEEN 132449.0*0.95 AND 132449.0*1.05
+
+
+SELECT  country_name,
+        land_area_sqkm
+FROM    forestation
+WHERE   year = 2016
+    AND land_area_sqkm <
+    (SELECT  -(t2.forest_area_sqkm - t1.forest_area_sqkm) AS forest_area_sqkm_diff
+    FROM    (
+            SELECT  country_name,
+                    forest_area_sqkm,
+                    forest_area_per
+            FROM    forestation
+            WHERE   country_name = 'World'
+              AND   year = 1990) AS t1
+      JOIN  (
+            SELECT  country_name,
+                    forest_area_sqkm,
+                    forest_area_per
+            FROM    forestation
+            WHERE   country_name = 'World'
+              AND   year = 2016) AS t2
+      ON    t1.country_name = t2.country_name
+    )
+ORDER BY 2 DESC
